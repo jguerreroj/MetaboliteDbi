@@ -1,0 +1,21 @@
+Package: MetaboliteDbi
+Title: Exploración de la base de datos de metabolitos "Metabolitos.xlsx"
+Version: 0.0.1.0
+Authors@R: 
+    person("José Manuel", "Guerrero Jiménez", email = "jguerrerojimenez@uoc.edu", role = c("aut", "cre"))
+Description: Permite realizar búsquedas de tipo SQL sobre la base de datos de metabolitos presente en "Metabolitos.xlsx". Además, también contiene funciones para facilitar: la búsqueda de filas e identificadores, el filtrado y el recuento de los niveles de anotación.
+Archivos: "Metabolitos.xlsx": Tabla de metabolitos proporcionada por el grupo de investigación en Biomarcadores y Metabolómica Nutricional y de los Alimentos del Departamento de Nutrición, Ciencias de la Alimentación y Gastronomía  de la Universidad de Barcelona liderado por la Pr. Cristina Andrés-Lacueva.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports: 
+    RSQLite,
+    DBI,
+    readxl,
+    dplyr,
+    tidyr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

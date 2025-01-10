@@ -1,0 +1,222 @@
+---
+title: "Ejemplo de uso"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ejemplo de uso}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(MetaboliteDbi)
+```
+
+
+# 1. Crear la base de datos SQL
+
+A partir del archivo "Metabolitos.xlsx", creamos una base de datos SQL ("metabolites.sqlite") con dos tablas, "metabolitos" y "metabolitosExp".
+
+```{r crear}
+create_metabolite_db()
+```
+
+
+# 2. Funciones para consultas tipo SELECT
+
+## Extraer columnas de "Metabolitos.xlsx" a partir de una lista de identificadores
+
+```{r listas}
+# Ejemplos de listas de identificadores:
+rnames_list <- c("n_acetyllysine", "n_acetylphenylalanine", "n_acetyltryptophan",
+                 "sarcosine", "dimethylglycine", "betaine", "t_4oh_pr", "cit_a_i_cit_a")
+
+HMDB_list <- c("HMDB0000206",	"HMDB0000512",	"HMDB0013713", "HMDB0000271", "HMDB0000092", "HMDB0000043", "HMDB0000725")
+
+kegg_list <- c("C02727", "C12989", "C03519", "C00213", "C01026", "C00719", "C01157")
+
+inchi_list <- c("VEYYWZRYIYDQJM-ZETCQYMHSA-N", "CBQJSKKFNMDLON-JTQLQIEISA-N", "DZTHIGRZJZPRDV-LBPRGKRZSA-N", "FSYKKLYZXJSNPZ-UHFFFAOYSA-N", "FFDGPVCHZBVARC-UHFFFAOYSA-N", "KWIUHFFTVRNATP-UHFFFAOYSA-N", "PMMYEEVYMWASQN-DMTCNVIQSA-N")
+
+fobi_list <- c("FOBI:030736", "FOBI:030737", "FOBI:050059", "FOBI:050060", "FOBI:030619", "FOBI:030620")
+```
+
+Empleamos la función `id_table()`.
+
+-   Valores por defecto (asume que los identificadores corresponden a la columna "R_Name"):
+
+```{r table_1}
+rnames_list <- c("n_acetyllysine", "n_acetylphenylalanine", "n_acetyltryptophan",
+                 "sarcosine", "dimethylglycine", "betaine", "t_4oh_pr", "cit_a_i_cit_a")
+id_table(rnames_list)
+```
+
+*   Ajustando los valores manualmente:
+
+Además de la lista de identificadores, "keys", la función `id_table()` también puede recibir otros dos argumentos: "keytype", en la que se puede indicar el tipo de llave de la lista introducida en "keys", y "columnas", que indica las columnas que se quieren extraer.
+
+Para conocer los nombres que `id_table()` (así como el resto de funciones que acepten "keytype") acepta como "keytype", podemos emplear la función `keytypes()`:
+
+```{r keytypes}
+keytypes()
+```
+
+Como se ha podido ver en la tabla anterior, en ocasiones, una misma fila puede tener más de un valor para una columna, como es el caso de la fila "K25" para los identificadores "HMDB_ID", "KEGG_ID" e "InChI_Key". A continuación comprobamos que podamos identificarlos individualmente:
+
+```{r table_2}
+#HMDB:
+HMDB_list <- c("HMDB0000206",	"HMDB0000512",	"HMDB0013713", "HMDB0000271", "HMDB0000092", "HMDB0000043", "HMDB0000725")
+id_table(HMDB_list, "HMDB_ID")
+```
+
+Como se puede comprobar, podemos recuperar la fila "K25" aunque solo introduzcamos uno de los dos identificadores HMDB.
+
+Por otro lado, también se puede apreciar que el identificador "HMDB0000725" aparece tanto en la observación "K31" como en la "K1044".
+
+```{r table_3}
+#KEGG:
+kegg_list <- c("C02727", "C12989", "C03519", "C00213", "C01026", "C00719", "C01157")
+id_table(kegg_list, "KEGG_ID")
+```
+
+Como se puede comprobar, aunque hemos introducido los dos identificadores KEGG de la fila "K25", esta fila solo aparece una vez en la tabla.
+
+Por otro lado, podemos apreciar que en este caso no aparece la fila "K1044". Esto se debe a que, al contrario que ocurría con el valor de "HMDB_ID", las filas "K31" y "K1004" no comparten el mismo valor de "KEGG_ID".
+
+Comprobamos que este comportamiento también se aplica con los identificadores "InChI_Key" y "FOBI_ID":
+```{r table_4}
+#InChI:
+inchi_list <- c("VEYYWZRYIYDQJM-ZETCQYMHSA-N", "CBQJSKKFNMDLON-JTQLQIEISA-N", "DZTHIGRZJZPRDV-LBPRGKRZSA-N", "FSYKKLYZXJSNPZ-UHFFFAOYSA-N", "FFDGPVCHZBVARC-UHFFFAOYSA-N", "KWIUHFFTVRNATP-UHFFFAOYSA-N", "PMMYEEVYMWASQN-DMTCNVIQSA-N")
+
+id_table(inchi_list, keytype = "InChI_Key", columnas = c("Pr_Key", "Order_Num", "InChI_Key", "MW_Mono_Mass"))
+
+#FOBI:
+fobi_list <- c("FOBI:08652", "FOBI:030736", "FOBI:030737", "FOBI:050059", "FOBI:050060", "FOBI:030619", "FOBI:030620")
+
+id_table(fobi_list, keytype = "FOBI_ID", columnas = c("Pr_Key", "Order_Num", "FOBI_ID", "RefMet"))
+```
+
+También podemos escribir directamente los valores (o valor) de "keys":
+
+```{r table_5}
+tabla_prueba <- id_table(1, keytype = "RefMet", columnas = c("Pr_Key", "RefMet"))
+head(tabla_prueba)
+```
+
+Si queremos obtener todas las columnas de la tabla de metabolitos, indicamos "*" en el argumento "columnas":
+
+```{r table_6}
+tabla_prueba <- id_table("1", keytype = "RefMet", columnas = "*")
+head(tabla_prueba)
+```
+
+Por otro lado, también se pueden buscar aquellas observaciones de la tabla de metabolitos a las que se ha asignado un valor especial para algún identificador, como "not available" o "not applicable":
+
+```{r table_7}
+head(id_table("not available", "HMDB_ID", c("Pr_Key", "Order_Num", "R_Name", "HMDB_ID")))
+head(id_table("not applicable", "HMDB_ID", c("Pr_Key", "Order_Num", "R_Name", "HMDB_ID")))
+```
+
+
+## Extraer todos los identificadores
+
+Algunas filas tienen más de un identificador, por ejemplo, la fila "K25" tiene como identificadores HMDB `r "HMDB0000206\r\nHMDB0000446"`. Si  queremos trabajar con estos datos, tendremos que separarlos en dos valores, "HMDB0000206" y "HMDB0000446". Para obtener los identificadores separados de una columna, podemos emplear la función `get_id()`.
+
+La función `get_id()` es equivalente a la función `id_table()`, pero devuelve las filas de la tabla "metabolitosExp", en lugar de las de la tabla "metabolitos".
+
+
+```{r separados}
+#Podemos indicar un único identificador:
+get_id("HMDB0000206", keytype =  "HMDB_ID", columnas = c("Pr_Key", "R_Name", "HMDB_ID"))
+
+
+#O una lista de identificadores:
+HMDB_sep <- get_id(rnames_list, columnas = c("Pr_Key", "R_Name", "HMDB_ID"))
+HMDB_sep
+
+#Obtenemos una lista con los indicadores "HMDB_ID" obtenidos sin repeticiones:
+HMDB_list <- unique(HMDB_sep$HMDB_ID)
+HMDB_list
+
+#Que es equivalente a hacer:
+get_id(rnames_list, columnas = "HMDB_ID")
+```
+
+
+### Contar los niveles de anotación
+
+Usando la función `count_levels()`, podemos obtener una tabla con los niveles de anotación RefMet de la lista.
+
+```{r niveles}
+#La función `count_levels()` solo tiene los argumentos "keys" y "keytype":
+count_levels(keys = HMDB_list, keytype = "HMDB_ID")
+```
+
+
+## Filtrar la lista
+
+Podemos filtrar con la función `filter_by()`:
+
+```{r filtrar}
+#Para buscar un valor:
+filter_by(rnames_list, filtro = "RefMet", valor = 1)
+
+#Para excluir un valor:
+filter_by(rnames_list, filtro = "origin", valor = "endogenous", igual = F)
+
+#También podemos usar los parámetros "keytype" y "columnas":
+filter_by(HMDB_list, keytype = "HMDB_ID", columnas = c("Pr_Key", "HMDB_ID", "Standard"), filtro = "Standard", valor = "N")
+```
+
+Como se puede comprobar en la segunda tabla, no hay ninguna observación de la lista `rnames_list` que tenga un valor de "origin" distinto de "endogenous". A continuación comprobamos si esto es verdad:
+
+```{r prueba_2}
+#En la tabla "metabolitos":
+id_table(rnames_list, columnas = c("Pr_Key", "origin"))
+
+#En la tabla "metabolitosExp":
+get_id(rnames_list, columna = "origin")
+```
+
+Podemos ver que la observación "K31" tiene como valor de `origin` "endogenous / food (meat)", en lugar de "endogenous". Sin embargo, esto se interpreta como si la observación "K31" tuviera dos valores de `origin`, "exogenous" y "food (meat)", y por lo tanto también es excluída junto con las demás observaciones "endogenous".
+
+A continuación, mostramos que, efectivamente, se tiene en cuenta este `origin` dual:
+
+```{r filtrar_2}
+#Solo las observaciones de la lista con "origin = endogenous":
+filter_by(rnames_list, filtro = "origin", valor = "endogenous", columnas = c("Pr_Key", "origin"))
+
+#Solo las observaciones de la lista que no tengan un "origin = food (meat)":
+filter_by(rnames_list, filtro = "origin", valor = "food (meat)", igual = F, columnas = c("Pr_Key", "origin"))
+
+#Solo las observaciones de la lista con "origin = food (meat)":
+filter_by(rnames_list, filtro = "origin", valor = "food (meat)", columnas = c("Pr_Key", "origin"))
+```
+
+# 3. Comandos SELECT
+
+También se pueden escribir *queries* de tipo SELECT directamente.
+
+Para ello, en primer lugar, establecemos la conexión con la base de datos "metabolitos.sqlite" con la función `get_db_connection()`.
+
+```{r conex}
+#Accedemos a la base de datos:
+db_met <- get_db_connection()
+```
+
+Hacemos las *queries* con la función `dbGetQuery()` del paquete `DBI`
+
+```{r queries}
+library(DBI)
+#Query sobre la tabla "metabolitos":
+dbGetQuery(db_met, "SELECT Pr_Key, R_Name, RefMet FROM metabolitos ORDER BY RefMet DESC LIMIT 5")
+
+#Query sobre la tabla "metabolitosExp":
+dbGetQuery(db_met, "SELECT Pr_Key, metabolite, HMDB_ID, KEGG_ID, InChI_Key FROM metabolitosExp WHERE Pr_Key = 'K25'")
+```
+
