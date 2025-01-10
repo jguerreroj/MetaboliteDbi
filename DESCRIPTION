@@ -19,3 +19,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/jguerreroj/MetaboliteDbi
+BugReports: https://github.com/jguerreroj/MetaboliteDbi/issues
