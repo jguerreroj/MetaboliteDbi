@@ -18,6 +18,14 @@ Mediante consultas SQL a ambas tablas relacionadas, se pueden resolver las ambig
 de metabolitos. Para facilitar estas consultas, se incluyen funciones que realizan de forma automatizada algunas
 de las consultas más comúnes: búsqueda de metabolitos, filtrados y el contaje de niveles de anotación (RefMet).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/jguerreroj/MetaboliteDbi}
+  \item Report bugs at \url{https://github.com/jguerreroj/MetaboliteDbi/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: José Manuel Guerrero Jiménez \email{jguerrerojimenez@uoc.edu}
 
