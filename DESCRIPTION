@@ -1,5 +1,5 @@
 Package: MetaboliteDbi
-Title: Exploración de la base de datos de metabolitos "Metabolitos.xlsx"
+Title: Base de datos de anotaciones para metabólica dirigida
 Version: 0.0.1.0
 Authors@R: 
     person("José Manuel", "Guerrero Jiménez", email = "jguerrerojimenez@uoc.edu", role = c("aut", "cre"))
