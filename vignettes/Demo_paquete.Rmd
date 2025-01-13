@@ -76,7 +76,7 @@ id_table(HMDB_list, "HMDB_ID")
 
 Como se puede comprobar, podemos recuperar la fila "K25" aunque solo introduzcamos uno de los dos identificadores HMDB.
 
-Por otro lado, también se puede apreciar que el identificador "HMDB0000725" aparece tanto en la observación "K31" como en la "K1044".
+Por otro lado, también se puede apreciar que el identificador "HMDB0000725" aparece tanto en la observación "K31" como en la "K1027".
 
 ```{r table_3}
 #KEGG:
@@ -86,7 +86,7 @@ id_table(kegg_list, "KEGG_ID")
 
 Como se puede comprobar, aunque hemos introducido los dos identificadores KEGG de la fila "K25", esta fila solo aparece una vez en la tabla.
 
-Por otro lado, podemos apreciar que en este caso no aparece la fila "K1044". Esto se debe a que, al contrario que ocurría con el valor de "HMDB_ID", las filas "K31" y "K1004" no comparten el mismo valor de "KEGG_ID".
+Por otro lado, podemos apreciar que en este caso no aparece la fila "K1027". Esto se debe a que, al contrario que ocurría con el valor de "HMDB_ID", las filas "K31" y "K1027" no comparten el mismo valor de "KEGG_ID".
 
 Comprobamos que este comportamiento también se aplica con los identificadores "InChI_Key" y "FOBI_ID":
 ```{r table_4}
