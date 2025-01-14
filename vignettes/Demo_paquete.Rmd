@@ -28,7 +28,7 @@ create_metabolite_db()
 ```
 
 
-# 2. Funciones para consultas tipo SELECT
+# 2. Funciones para consultas
 
 ## Extraer columnas de "Metabolitos.xlsx" a partir de una lista de identificadores
 
