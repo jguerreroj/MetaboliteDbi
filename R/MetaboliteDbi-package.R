@@ -10,6 +10,7 @@
 #' Mediante consultas SQL a ambas tablas relacionadas, se pueden resolver las ambigüedades presentes en la tabla
 #' de metabolitos. Para facilitar estas consultas, se incluyen funciones que realizan de forma automatizada algunas
 #' de las consultas más comúnes: búsqueda de metabolitos, filtrados y el contaje de niveles de anotación (RefMet).
+#' Estas funciones están inspiradas en los métodos de consultas de `AnnotationDbi`.
 #'
 #' @name MetaboliteDbi
 "_PACKAGE"
